@@ -3,6 +3,7 @@
 ## 已提供脚本
 - `scripts/build-image.sh`
 - `scripts/run-compose.sh`
+- `scripts/check-runtime.sh`
 
 ## 1. 构建定制镜像
 默认构建：
@@ -50,6 +51,25 @@ bash scripts/run-compose.sh logs
 bash scripts/run-compose.sh ps
 ```
 
+## 7. 运行时检查
+```bash
+bash scripts/check-runtime.sh
+```
+
+默认会检查：
+- 容器是否运行
+- 容器 IP 是否存在
+- `firewall.@defaults[0].forward` 是否为 `ACCEPT`
+- 是否存在 `masq='1'`
+- `uhttpd` / `rpcd` 进程
+- LuCI HTTP 可达性
+- OpenClash 页面基础可达性
+
+### 可选环境变量
+```bash
+CONTAINER_NAME=istoreos bash scripts/check-runtime.sh
+```
+
 ## 默认使用的 Compose 文件
 默认是：
 ```bash
@@ -66,4 +86,5 @@ COMPOSE_FILE=docker-compose.minimal.yml bash scripts/run-compose.sh up
 bash scripts/build-image.sh
 bash scripts/run-compose.sh up
 bash scripts/run-compose.sh ps
+bash scripts/check-runtime.sh
 ```

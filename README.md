@@ -28,6 +28,7 @@
 - `scripts/apply-firewall-defaults.sh`：防火墙默认值固化脚本
 - `scripts/build-image.sh`：镜像构建脚本
 - `scripts/run-compose.sh`：Compose 启停脚本
+- `scripts/check-runtime.sh`：运行时检查脚本
 - `docs/`：设计、部署、裁剪、验证文档
 - `.github/`：Issue / PR 模板
 
@@ -78,7 +79,12 @@ bash scripts/run-compose.sh up
 bash scripts/run-compose.sh ps
 ```
 
-### 4. 飞牛导入
+### 4. 运行时检查
+```bash
+bash scripts/check-runtime.sh
+```
+
+### 5. 飞牛导入
 如果使用飞牛 GUI 导入 Compose，优先参考：
 - `docker-compose.feiniu.yml`
 - `docs/feiniu-compose-import.md`
@@ -124,6 +130,7 @@ bash scripts/run-compose.sh ps
 bash scripts/build-image.sh
 bash scripts/run-compose.sh up
 bash scripts/run-compose.sh logs
+bash scripts/check-runtime.sh
 bash scripts/run-compose.sh down
 ```
 
