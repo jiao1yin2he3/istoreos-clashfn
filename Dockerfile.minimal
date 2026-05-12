@@ -3,11 +3,16 @@ FROM wukongdaily/openwrt-istoreos:arm64-latest
 # First-pass minimalization for Feiniu app scenario:
 # keep LuCI, iStore, multi-language, bypass routing, OpenClash.
 # remove multimedia, printing, bluetooth, downloaders, extra themes.
+# Also force firewall defaults for bypass-router use:
+# - forward policy = ACCEPT
+# - masquerading enabled on all existing zones
 
 COPY scripts/prune-packages.sh /usr/local/bin/prune-packages.sh
+COPY scripts/apply-firewall-defaults.sh /usr/local/bin/apply-firewall-defaults.sh
 COPY config/candidate-remove-list.txt /tmp/candidate-remove-list.txt
-RUN chmod +x /usr/local/bin/prune-packages.sh \
+RUN chmod +x /usr/local/bin/prune-packages.sh /usr/local/bin/apply-firewall-defaults.sh \
     && /usr/local/bin/prune-packages.sh /tmp/candidate-remove-list.txt \
+    && /usr/local/bin/apply-firewall-defaults.sh \
     && rm -f /tmp/candidate-remove-list.txt
 
 CMD ["/sbin/init"]

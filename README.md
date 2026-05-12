@@ -16,6 +16,7 @@
 1. 基于现有可运行 iStoreOS ARM64 容器做第一轮温和裁剪
 2. 保留飞牛场景必要能力
 3. 默认使用你自己的定制镜像部署
+4. 固化旁路由默认防火墙行为：`forward=ACCEPT`、`masq=1`
 
 ## 目录说明
 - `docker-compose.feiniu.yml`：飞牛 GUI 可直接导入版 Compose
@@ -24,6 +25,7 @@
 - `Dockerfile.minimal`：第一轮裁剪镜像构建文件
 - `config/candidate-remove-list.txt`：第一轮候选删除清单
 - `scripts/prune-packages.sh`：裁剪脚本
+- `scripts/apply-firewall-defaults.sh`：防火墙默认值固化脚本
 - `scripts/build-image.sh`：镜像构建脚本
 - `scripts/run-compose.sh`：Compose 启停脚本
 - `docs/`：设计、部署、裁剪、验证文档
@@ -33,9 +35,6 @@
 ```yaml
 services:
   istoreos:
-    # 使用你自己的 ARM64 定制镜像
-    # 本地构建后可直接写：istoreos-fn:minimal-v1
-    # 如果后续推到镜像仓库，可改成：yourname/istoreos-fn:minimal-v1
     image: istoreos-fn:minimal-v1
     container_name: istoreos
     privileged: true
@@ -56,8 +55,6 @@ networks:
     name: ios_macnet
     driver: macvlan
     driver_opts:
-      # 这里替换为你设备的网卡名称（比如 eth0、end0、enp1s0、enp1s0-ovs 等）
-      # 可用 ip link show 查看
       parent: end0
     ipam:
       config:
@@ -93,6 +90,7 @@ bash scripts/run-compose.sh ps
 - OpenClash
 - 旁路由相关网络栈
 - LuCI 核心
+- 旁路由默认防火墙策略（`forward=ACCEPT`，Masquerading 开启）
 
 第一轮明确删除：
 - 多媒体
@@ -105,6 +103,7 @@ bash scripts/run-compose.sh ps
 - `docs/package-profile.md`
 - `docs/minimalization-strategy.md`
 - `docs/round-1-prune-targets.md`
+- `docs/firewall-defaults.md`
 
 ## 验证建议
 部署后建议按以下文档做回归测试：
@@ -117,6 +116,8 @@ bash scripts/run-compose.sh ps
 - macvlan 独立 IP
 - 旁路由链路
 - 多语言与默认主题
+- `uci get firewall.@defaults[0].forward` 返回 `ACCEPT`
+- `uci show firewall | grep '\.masq='` 显示已开启
 
 ## 常用命令
 ```bash
