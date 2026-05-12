@@ -1,15 +1,21 @@
-# 极简 ARM 版 iStoreOS → 飞牛应用
+# istoreos-clashfn
 
-面向 OEC / OECT 设备，定制一个极简 ARM64 iStoreOS 容器方案，用于飞牛应用场景。
+面向 OEC / OECT 设备的极简 ARM64 iStoreOS 容器方案，目标是在飞牛场景中保留 **Web 管理、软件商店、多语言、旁路由能力、OpenClash**，并通过 **Compose** 方式部署。
 
-当前目标：
+## 项目目标
 - 保留 Web 管理
 - 保留软件商店
 - 保留多语言
 - 保留旁路由能力
 - 支持 OpenClash
 - 支持 Compose 方式部署
-- 适合上传到 GitHub，便于后续 pull / clone / 协作
+- 适合 GitHub 协作与后续 Pull Request
+
+## 当前阶段
+当前仓库处于 **v0.1 原型阶段**，重点是：
+1. 基于现有可运行 iStoreOS ARM64 容器做第一轮温和裁剪
+2. 保留飞牛场景必要能力
+3. 优先提供可导入的 Compose 模板
 
 ## 目录说明
 - `docker-compose.feiniu.yml`：飞牛 GUI 可直接导入版 Compose
@@ -19,6 +25,7 @@
 - `config/candidate-remove-list.txt`：第一轮候选删除清单
 - `scripts/prune-packages.sh`：裁剪脚本
 - `docs/`：设计、部署、裁剪、验证文档
+- `.github/`：Issue / PR 模板
 
 ## 快速开始
 ### 1. 构建镜像
@@ -31,13 +38,51 @@ docker build -f Dockerfile.minimal -t istoreos-fn:minimal-v1 .
 docker compose -f docker-compose.feiniu.yml up -d
 ```
 
-## GitHub 协作方式
-推荐流程：
-1. 创建 GitHub 仓库
-2. 添加远程 `origin`
-3. `git push -u origin main`
-4. 后续通过 `git pull` / Pull Request 协作
+### 3. 飞牛导入
+如果使用飞牛 GUI 导入 Compose，优先参考：
+- `docker-compose.feiniu.yml`
+- `docs/feiniu-compose-import.md`
 
-## 注意
-- `data/` 和 `.env` 已加入 `.gitignore`，避免把运行时数据和本地环境提交到仓库。
-- 首次导入飞牛前，请先检查 `docker-compose.feiniu.yml` 中的网卡、IP、网关配置。
+## 当前精简策略
+第一轮明确保留：
+- 软件商店
+- 多语言
+- OpenClash
+- 旁路由相关网络栈
+- LuCI 核心
+
+第一轮明确删除：
+- 多媒体
+- 打印
+- 蓝牙
+- 下载器
+- 多余主题
+
+详细说明见：
+- `docs/package-profile.md`
+- `docs/minimalization-strategy.md`
+- `docs/round-1-prune-targets.md`
+
+## 验证建议
+部署后建议按以下文档做回归测试：
+- `docs/smoke-test-checklist.md`
+
+重点验证：
+- LuCI
+- 软件商店
+- OpenClash 页面与启动
+- macvlan 独立 IP
+- 旁路由链路
+- 多语言与默认主题
+
+## GitHub 协作
+```bash
+git clone https://github.com/jiao1yin2he3/istoreos-clashfn.git
+cd istoreos-clashfn
+git pull
+```
+
+欢迎通过 Issue 和 Pull Request 参与贡献。
+
+## License
+MIT
