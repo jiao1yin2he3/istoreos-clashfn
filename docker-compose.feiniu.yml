@@ -1,6 +1,10 @@
 services:
   istoreos:
-    image: istoreos-fn:minimal-v1
+    # ARM64 架构镜像：
+    # - wukongdaily/openwrt-istoreos:arm64-latest 纯净版
+    # - wukongdaily/openwrt-istoreos:arm64-ops    带插件版
+    # 也可以替换成你自己的精简镜像，例如：istoreos-fn:minimal-v1
+    image: wukongdaily/openwrt-istoreos:arm64-latest
     container_name: istoreos
     privileged: true
     restart: always
@@ -13,6 +17,7 @@ services:
       - ./data/upper:/overlay
     networks:
       ios_macnet:
+        # 这里改成一个未被占用的固定 IP
         ipv4_address: 192.168.66.2
 
 networks:
@@ -20,6 +25,8 @@ networks:
     name: ios_macnet
     driver: macvlan
     driver_opts:
+      # 这里替换为你设备的网卡名称（比如 eth0、end0、enp1s0、enp1s0-ovs 等）
+      # 可用 ip link show 查看
       parent: end0
     ipam:
       config:

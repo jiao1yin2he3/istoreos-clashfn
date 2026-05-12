@@ -27,8 +27,45 @@
 - `docs/`：设计、部署、裁剪、验证文档
 - `.github/`：Issue / PR 模板
 
+## 推荐 Compose 部署
+```yaml
+services:
+  istoreos:
+    # ARM64 架构镜像：
+    # - wukongdaily/openwrt-istoreos:arm64-latest 纯净版
+    # - wukongdaily/openwrt-istoreos:arm64-ops    带插件版
+    # 也可以替换成你自己的精简镜像，例如：istoreos-fn:minimal-v1
+    image: wukongdaily/openwrt-istoreos:arm64-latest
+    container_name: istoreos
+    privileged: true
+    restart: always
+    command: /sbin/init
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - ./data/root:/root
+      - ./data/etc:/etc
+      - ./data/upper:/overlay
+    networks:
+      ios_macnet:
+        ipv4_address: 192.168.66.2
+
+networks:
+  ios_macnet:
+    name: ios_macnet
+    driver: macvlan
+    driver_opts:
+      # 这里替换为你设备的网卡名称（比如 eth0、end0、enp1s0、enp1s0-ovs 等）
+      # 可用 ip link show 查看
+      parent: end0
+    ipam:
+      config:
+        - subnet: 192.168.66.0/24
+          gateway: 192.168.66.1
+```
+
 ## 快速开始
-### 1. 构建镜像
+### 1. 构建自定义镜像（可选）
 ```bash
 docker build -f Dockerfile.minimal -t istoreos-fn:minimal-v1 .
 ```

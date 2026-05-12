@@ -1,6 +1,10 @@
 services:
   istoreos:
-    image: istoreos-fn:minimal-v1
+    # ARM64 架构镜像：
+    # - wukongdaily/openwrt-istoreos:arm64-latest 纯净版
+    # - wukongdaily/openwrt-istoreos:arm64-ops    带插件版
+    # - yourname/istoreos-fn:minimal-v1           你自己的精简版
+    image: <改成镜像地址>
     container_name: istoreos
     privileged: true
     restart: always
@@ -8,9 +12,9 @@ services:
     environment:
       TZ: Asia/Shanghai
     volumes:
-      - ./data/root:/root
-      - ./data/etc:/etc
-      - ./data/upper:/overlay
+      - <改成宿主机目录>/root:/root
+      - <改成宿主机目录>/etc:/etc
+      - <改成宿主机目录>/overlay:/overlay
     networks:
       ios_macnet:
         ipv4_address: <改成容器固定IP>
@@ -20,8 +24,9 @@ networks:
     name: ios_macnet
     driver: macvlan
     driver_opts:
+      # 可用 ip link show 查看宿主机网卡名
       parent: <改成宿主机网卡名>
     ipam:
       config:
-        - subnet: <改成局域网网段，例如192.168.66.0/24>
-          gateway: <改成局域网网关，例如192.168.66.1>
+        - subnet: <改成局域网网段，例如 192.168.66.0/24>
+          gateway: <改成局域网网关，例如 192.168.66.1>
