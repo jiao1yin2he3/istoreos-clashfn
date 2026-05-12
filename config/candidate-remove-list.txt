@@ -1,0 +1,56 @@
+# First-pass candidate removal list
+# Goal: remove multimedia, printing, bluetooth, downloaders, extra themes.
+# IMPORTANT: this is a conservative starter list. Some packages may not exist
+# in the base image; the prune script will skip them automatically.
+
+# Multimedia
+ffmpeg
+ffmpeg-remux
+ffmpeg-full
+miniupnpd
+minidlna
+luci-app-minidlna
+mjpg-streamer
+mjpg-streamer-www
+luci-app-mjpg-streamer
+alist
+luci-app-alist
+
+# Printing
+cups
+cupsd
+p910nd
+luci-app-p910nd
+
+# Bluetooth
+bluez-daemon
+bluez-libs
+bluez-utils
+bluetoothd
+luci-app-bluetooth
+
+# Downloaders
+aria2
+ariang
+luci-app-aria2
+luci-app-ariang
+qBittorrent
+qbittorrent
+luci-app-qbittorrent
+transmission-daemon
+transmission-web
+transmission-cli
+luci-app-transmission
+xunlei
+luci-app-xunlei
+
+# Extra themes (keep one default theme; adjust after confirming actual default)
+luci-theme-argon
+luci-theme-design
+luci-theme-edge
+luci-theme-kucat
+luci-theme-netgear
+luci-theme-opentomcat
+luci-theme-openwrt-2020
+luci-theme-infinityfreedom
+luci-app-argon-config

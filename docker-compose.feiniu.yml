@@ -1,0 +1,27 @@
+services:
+  istoreos:
+    image: istoreos-fn:minimal-v1
+    container_name: istoreos
+    privileged: true
+    restart: always
+    command: /sbin/init
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - ./data/root:/root
+      - ./data/etc:/etc
+      - ./data/upper:/overlay
+    networks:
+      ios_macnet:
+        ipv4_address: 192.168.66.2
+
+networks:
+  ios_macnet:
+    name: ios_macnet
+    driver: macvlan
+    driver_opts:
+      parent: end0
+    ipam:
+      config:
+        - subnet: 192.168.66.0/24
+          gateway: 192.168.66.1

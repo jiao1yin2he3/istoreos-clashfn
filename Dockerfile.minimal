@@ -1,0 +1,13 @@
+FROM wukongdaily/openwrt-istoreos:arm64-latest
+
+# First-pass minimalization for Feiniu app scenario:
+# keep LuCI, iStore, multi-language, bypass routing, OpenClash.
+# remove multimedia, printing, bluetooth, downloaders, extra themes.
+
+COPY scripts/prune-packages.sh /usr/local/bin/prune-packages.sh
+COPY config/candidate-remove-list.txt /tmp/candidate-remove-list.txt
+RUN chmod +x /usr/local/bin/prune-packages.sh \
+    && /usr/local/bin/prune-packages.sh /tmp/candidate-remove-list.txt \
+    && rm -f /tmp/candidate-remove-list.txt
+
+CMD ["/sbin/init"]
