@@ -1,9 +1,9 @@
 services:
   istoreos:
-    # 使用你自己的 ARM64 定制镜像
-    # 本地构建后可直接写：istoreos-fn:minimal-v1
-    # 如果后续推到镜像仓库，可改成：yourname/istoreos-fn:minimal-v1
-    image: istoreos-fn:minimal-v1
+    # 使用已发布到 GHCR 的 ARM64 定制镜像
+    # 默认标签：ghcr.io/jiao1yin2he3/istoreos-clashfn:minimal-v1
+    # 如需固定到某次发布，也可改成 sha-* 或版本 tag
+    image: ghcr.io/jiao1yin2he3/istoreos-clashfn:minimal-v1
     container_name: istoreos
     privileged: true
     restart: always

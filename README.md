@@ -15,7 +15,7 @@
 当前仓库处于 **v0.1 原型阶段**，重点是：
 1. 基于现有可运行 iStoreOS ARM64 容器做第一轮温和裁剪
 2. 保留飞牛场景必要能力
-3. 默认使用你自己的定制镜像部署
+3. 默认使用已发布的定制镜像部署
 4. 固化旁路由默认防火墙行为：`forward=ACCEPT`、`masq=1`
 
 ## 目录说明
@@ -27,8 +27,9 @@
 - `scripts/prune-packages.sh`：裁剪脚本
 - `scripts/apply-firewall-defaults.sh`：防火墙默认值固化脚本
 - `scripts/build-image.sh`：镜像构建脚本
-- `scripts/run-compose.sh`：Compose 启停脚本
+- `scripts/run-compose.sh`：Compose 启停脚本（自动兼容 `docker compose` / `docker-compose`）
 - `scripts/check-runtime.sh`：运行时检查脚本
+- `.github/workflows/publish-image.yml`：自动发布 GHCR 镜像
 - `docs/`：设计、部署、裁剪、验证文档
 - `.github/`：Issue / PR 模板
 
@@ -36,7 +37,7 @@
 ```yaml
 services:
   istoreos:
-    image: istoreos-fn:minimal-v1
+    image: ghcr.io/jiao1yin2he3/istoreos-clashfn:minimal-v1
     container_name: istoreos
     privileged: true
     restart: always
@@ -63,10 +64,25 @@ networks:
           gateway: 192.168.66.1
 ```
 
-## 快速开始
-### 1. 先构建自定义镜像
+## Compose 兼容性
+当前环境实测：
+- `docker compose` 不可用
+- `docker-compose` 可用
+
+所以如果你手工执行命令，请优先用：
 ```bash
-bash scripts/build-image.sh
+docker-compose -f docker-compose.feiniu.yml up -d
+```
+
+或者直接用仓库脚本：
+```bash
+bash scripts/run-compose.sh up
+```
+
+## 快速开始
+### 1. 直接拉取已发布镜像
+```bash
+docker pull ghcr.io/jiao1yin2he3/istoreos-clashfn:minimal-v1
 ```
 
 ### 2. Compose 启动
@@ -88,6 +104,7 @@ bash scripts/check-runtime.sh
 如果使用飞牛 GUI 导入 Compose，优先参考：
 - `docker-compose.feiniu.yml`
 - `docs/feiniu-compose-import.md`
+- `docs/publish-image.md`
 
 ## 当前精简策略
 第一轮明确保留：
@@ -110,6 +127,7 @@ bash scripts/check-runtime.sh
 - `docs/minimalization-strategy.md`
 - `docs/round-1-prune-targets.md`
 - `docs/firewall-defaults.md`
+- `docs/publish-image.md`
 
 ## 验证建议
 部署后建议按以下文档做回归测试：
@@ -127,7 +145,7 @@ bash scripts/check-runtime.sh
 
 ## 常用命令
 ```bash
-bash scripts/build-image.sh
+docker pull ghcr.io/jiao1yin2he3/istoreos-clashfn:minimal-v1
 bash scripts/run-compose.sh up
 bash scripts/run-compose.sh logs
 bash scripts/check-runtime.sh
