@@ -1,10 +1,9 @@
 services:
   istoreos:
-    # ARM64 架构镜像：
-    # - wukongdaily/openwrt-istoreos:arm64-latest 纯净版
-    # - wukongdaily/openwrt-istoreos:arm64-ops    带插件版
-    # 也可以替换成你自己的精简镜像，例如：istoreos-fn:minimal-v1
-    image: wukongdaily/openwrt-istoreos:arm64-latest
+    # 使用你自己的 ARM64 定制镜像
+    # 本地构建后可直接写：istoreos-fn:minimal-v1
+    # 如果后续推到镜像仓库，可改成：yourname/istoreos-fn:minimal-v1
+    image: istoreos-fn:minimal-v1
     container_name: istoreos
     privileged: true
     restart: always

@@ -5,15 +5,15 @@
 - `docker-compose.feiniu.example.yml`：占位符模板版本
 
 ## 推荐 Compose 配置
-下面这份配置适合飞牛 GUI 导入，也适合作为 README 中的标准部署示例：
+下面这份配置以 **你自己的 ARM64 定制镜像** 为默认前提，适合飞牛 GUI 导入，也适合作为 README 中的标准部署示例：
 
 ```yaml
 services:
   istoreos:
-    # ARM64 架构镜像：
-    # - wukongdaily/openwrt-istoreos:arm64-latest 纯净版
-    # - wukongdaily/openwrt-istoreos:arm64-ops    带插件版
-    image: wukongdaily/openwrt-istoreos:arm64-latest
+    # 使用你自己的 ARM64 定制镜像
+    # 本地构建后可直接写：istoreos-fn:minimal-v1
+    # 如果后续推到镜像仓库，可改成：yourname/istoreos-fn:minimal-v1
+    image: istoreos-fn:minimal-v1
     container_name: istoreos
     privileged: true
     restart: always
@@ -42,16 +42,28 @@ networks:
           gateway: 192.168.66.1
 ```
 
-## 镜像选择建议
-### 1. 先验证官方 ARM64 镜像
-适合快速跑通：
-- `wukongdaily/openwrt-istoreos:arm64-latest`
-- `wukongdaily/openwrt-istoreos:arm64-ops`
+## 默认镜像策略
+当前仓库默认推荐：
+- **部署时直接使用你自己的定制镜像**：`istoreos-fn:minimal-v1`
 
-### 2. 再切换到你的精简版镜像
-等第一轮裁剪稳定后，可以替换成：
-- `istoreos-fn:minimal-v1`
-- 或你自己的仓库地址，例如 `yourname/istoreos-fn:minimal-v1`
+如果后续需要发布给其他人使用，再替换成：
+- 你自己的镜像仓库地址，例如 `yourname/istoreos-fn:minimal-v1`
+
+## 部署前提
+在使用 `docker-compose.feiniu.yml` 之前，请先完成镜像构建：
+
+```bash
+docker build -f Dockerfile.minimal -t istoreos-fn:minimal-v1 .
+```
+
+如果你不是用本地镜像，而是已经推到远程仓库，则把 compose 中的：
+```yaml
+image: istoreos-fn:minimal-v1
+```
+改成：
+```yaml
+image: yourname/istoreos-fn:minimal-v1
+```
 
 ## 当前固定值版本
 `docker-compose.feiniu.yml` 里默认写的是：
@@ -95,15 +107,11 @@ ipv4_address: 192.168.66.2
 - 最好提前在路由器 DHCP 排除这个固定 IP
 
 ### 3. 镜像名
-如果你最终不是官方镜像，把：
-```yaml
-image: wukongdaily/openwrt-istoreos:arm64-latest
-```
-改成你的实际镜像地址，例如：
+如果你使用的不是本地默认镜像，把：
 ```yaml
 image: istoreos-fn:minimal-v1
 ```
-或：
+改成你的实际镜像地址，例如：
 ```yaml
 image: yourname/istoreos-fn:minimal-v1
 ```
@@ -126,7 +134,12 @@ image: yourname/istoreos-fn:minimal-v1
 ```
 
 ## 部署命令
-### Docker Compose CLI
+### 1. 先构建你的定制镜像
+```bash
+docker build -f Dockerfile.minimal -t istoreos-fn:minimal-v1 .
+```
+
+### 2. Docker Compose CLI 启动
 ```bash
 docker compose -f docker-compose.feiniu.yml up -d
 ```
@@ -141,12 +154,13 @@ docker compose -f docker-compose.feiniu.yml down
 docker compose -f docker-compose.feiniu.yml logs -f
 ```
 
-### 飞牛 GUI 导入
-1. 打开飞牛应用 / Compose 导入界面
-2. 粘贴 `docker-compose.feiniu.yml` 内容
-3. 按你的环境修改 `parent`、`subnet`、`gateway`、`ipv4_address`
-4. 确认挂载目录可写
-5. 提交并启动
+### 3. 飞牛 GUI 导入
+1. 先完成镜像构建，确保宿主机本地已有 `istoreos-fn:minimal-v1`
+2. 打开飞牛应用 / Compose 导入界面
+3. 粘贴 `docker-compose.feiniu.yml` 内容
+4. 按你的环境修改 `parent`、`subnet`、`gateway`、`ipv4_address`
+5. 确认挂载目录可写
+6. 提交并启动
 
 ## 导入后验证
 导入启动后，按下面顺序验证：
@@ -158,6 +172,9 @@ docker compose -f docker-compose.feiniu.yml logs -f
 6. 多语言与默认主题是否正常
 
 ## 常见问题
+### 提示找不到镜像
+说明你还没有先构建本地镜像，或者 compose 里的镜像名和你实际构建的 tag 不一致。
+
 ### 宿主机访问不到容器 IP
 这是 `macvlan` 常见现象，不一定是部署失败。
 
@@ -173,4 +190,4 @@ docker compose -f docker-compose.feiniu.yml logs -f
 优先检查：
 - 容器是否 `privileged: true`
 - TUN / 防火墙相关能力是否正常
-- 当前镜像是否包含 OpenClash 所需依赖
+- 当前自定义镜像是否包含 OpenClash 所需依赖

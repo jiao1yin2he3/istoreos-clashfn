@@ -15,7 +15,7 @@
 当前仓库处于 **v0.1 原型阶段**，重点是：
 1. 基于现有可运行 iStoreOS ARM64 容器做第一轮温和裁剪
 2. 保留飞牛场景必要能力
-3. 优先提供可导入的 Compose 模板
+3. 默认使用你自己的定制镜像部署
 
 ## 目录说明
 - `docker-compose.feiniu.yml`：飞牛 GUI 可直接导入版 Compose
@@ -31,11 +31,10 @@
 ```yaml
 services:
   istoreos:
-    # ARM64 架构镜像：
-    # - wukongdaily/openwrt-istoreos:arm64-latest 纯净版
-    # - wukongdaily/openwrt-istoreos:arm64-ops    带插件版
-    # 也可以替换成你自己的精简镜像，例如：istoreos-fn:minimal-v1
-    image: wukongdaily/openwrt-istoreos:arm64-latest
+    # 使用你自己的 ARM64 定制镜像
+    # 本地构建后可直接写：istoreos-fn:minimal-v1
+    # 如果后续推到镜像仓库，可改成：yourname/istoreos-fn:minimal-v1
+    image: istoreos-fn:minimal-v1
     container_name: istoreos
     privileged: true
     restart: always
@@ -65,7 +64,7 @@ networks:
 ```
 
 ## 快速开始
-### 1. 构建自定义镜像（可选）
+### 1. 先构建自定义镜像
 ```bash
 docker build -f Dockerfile.minimal -t istoreos-fn:minimal-v1 .
 ```
