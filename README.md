@@ -50,6 +50,7 @@ services:
       - ./data/upper:/overlay
     networks:
       ios_macnet:
+#根据自己ip修改成192.168.XXX(主路由网段).XXX（未被占用的地址）
         ipv4_address: 192.168.66.2
 
 networks:
@@ -60,7 +61,9 @@ networks:
       parent: end0
     ipam:
       config:
+#根据自己ip修改成192.168.XXX.0/24(主路由网段)
         - subnet: 192.168.66.0/24
+#根据自己ip修改成192.168.XXX.1(主路由网段)
           gateway: 192.168.66.1
 ```
 
