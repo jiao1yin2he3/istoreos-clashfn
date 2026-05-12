@@ -5,6 +5,21 @@
 - `scripts/run-compose.sh`
 - `scripts/check-runtime.sh`
 
+## Compose 兼容性说明
+当前机器上实测情况是：
+- `docker compose` **不可用**
+- `docker-compose` **可用**
+
+因此 `scripts/run-compose.sh` 已经做了自动兼容：
+1. 优先尝试 `docker compose`
+2. 如果不可用，自动回退到 `docker-compose`
+
+你可以继续统一执行：
+```bash
+bash scripts/run-compose.sh up
+```
+不需要手动区分两种命令。
+
 ## 1. 构建定制镜像
 默认构建：
 ```bash

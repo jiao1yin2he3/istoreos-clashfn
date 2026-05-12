@@ -7,29 +7,39 @@ WORKDIR="${WORKDIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 
 cd "$WORKDIR"
 
+if docker compose version >/dev/null 2>&1; then
+  COMPOSE_CMD=(docker compose)
+elif command -v docker-compose >/dev/null 2>&1; then
+  COMPOSE_CMD=(docker-compose)
+else
+  echo "[compose] neither 'docker compose' nor 'docker-compose' is available"
+  exit 1
+fi
+
 echo "[compose] workdir: $WORKDIR"
 echo "[compose] file: $COMPOSE_FILE"
 echo "[compose] action: $ACTION"
+echo "[compose] command: ${COMPOSE_CMD[*]}"
 
 case "$ACTION" in
   up)
-    docker compose -f "$COMPOSE_FILE" up -d
+    "${COMPOSE_CMD[@]}" -f "$COMPOSE_FILE" up -d
     ;;
   down)
-    docker compose -f "$COMPOSE_FILE" down
+    "${COMPOSE_CMD[@]}" -f "$COMPOSE_FILE" down
     ;;
   restart)
-    docker compose -f "$COMPOSE_FILE" down
-    docker compose -f "$COMPOSE_FILE" up -d
+    "${COMPOSE_CMD[@]}" -f "$COMPOSE_FILE" down
+    "${COMPOSE_CMD[@]}" -f "$COMPOSE_FILE" up -d
     ;;
   logs)
-    docker compose -f "$COMPOSE_FILE" logs -f
+    "${COMPOSE_CMD[@]}" -f "$COMPOSE_FILE" logs -f
     ;;
   ps)
-    docker compose -f "$COMPOSE_FILE" ps
+    "${COMPOSE_CMD[@]}" -f "$COMPOSE_FILE" ps
     ;;
   pull)
-    docker compose -f "$COMPOSE_FILE" pull
+    "${COMPOSE_CMD[@]}" -f "$COMPOSE_FILE" pull
     ;;
   *)
     echo "Usage: $0 [up|down|restart|logs|ps|pull]"
