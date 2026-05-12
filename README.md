@@ -24,6 +24,8 @@
 - `Dockerfile.minimal`：第一轮裁剪镜像构建文件
 - `config/candidate-remove-list.txt`：第一轮候选删除清单
 - `scripts/prune-packages.sh`：裁剪脚本
+- `scripts/build-image.sh`：镜像构建脚本
+- `scripts/run-compose.sh`：Compose 启停脚本
 - `docs/`：设计、部署、裁剪、验证文档
 - `.github/`：Issue / PR 模板
 
@@ -66,15 +68,20 @@ networks:
 ## 快速开始
 ### 1. 先构建自定义镜像
 ```bash
-docker build -f Dockerfile.minimal -t istoreos-fn:minimal-v1 .
+bash scripts/build-image.sh
 ```
 
 ### 2. Compose 启动
 ```bash
-docker compose -f docker-compose.feiniu.yml up -d
+bash scripts/run-compose.sh up
 ```
 
-### 3. 飞牛导入
+### 3. 查看运行状态
+```bash
+bash scripts/run-compose.sh ps
+```
+
+### 4. 飞牛导入
 如果使用飞牛 GUI 导入 Compose，优先参考：
 - `docker-compose.feiniu.yml`
 - `docs/feiniu-compose-import.md`
@@ -110,6 +117,14 @@ docker compose -f docker-compose.feiniu.yml up -d
 - macvlan 独立 IP
 - 旁路由链路
 - 多语言与默认主题
+
+## 常用命令
+```bash
+bash scripts/build-image.sh
+bash scripts/run-compose.sh up
+bash scripts/run-compose.sh logs
+bash scripts/run-compose.sh down
+```
 
 ## GitHub 协作
 ```bash
